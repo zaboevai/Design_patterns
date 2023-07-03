@@ -1,41 +1,41 @@
 from abc import ABC, abstractmethod
 
 
-class FlyBeghavior(ABC):
+class FlyBehavior(ABC):
 
     @abstractmethod
     def fly(self):
         pass
 
 
-class FlyLikeDuck(FlyBeghavior):
+class FlyLikeDuck(FlyBehavior):
 
     def fly(self):
         print('fly like duck')
 
 
-class FlyLikeAirCraft(FlyBeghavior):
+class FlyLikeAirCraft(FlyBehavior):
 
     def fly(self):
         print('fly like AirCraft')
 
 
-class QuackBeghavior(ABC):
+class QuackBehavior(ABC):
 
     @abstractmethod
     def quack(self):
         pass
 
 
-class QuackLikeDuck(QuackBeghavior):
+class QuackLikeDuck(QuackBehavior):
 
     def quack(self):
         print('quack like duck')
 
 
 class Duck(ABC):
-    fly_behavior: FlyBeghavior
-    quack_behavior: QuackBeghavior
+    fly_behavior: FlyBehavior
+    quack_behavior: QuackBehavior
 
     def perform_fly(self):
         self.fly_behavior.fly()
@@ -49,9 +49,10 @@ class MallardDuck(Duck):
     quack_behavior = QuackLikeDuck()
 
 
-duck = MallardDuck()
+if __name__ == '__main__':
+    duck = MallardDuck()
 
-duck.perform_quack()
+    duck.perform_quack()
 
-duck.fly_behavior = FlyLikeAirCraft()
-duck.perform_fly()
+    duck.fly_behavior = FlyLikeAirCraft()
+    duck.perform_fly()
