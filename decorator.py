@@ -1,93 +1,125 @@
+from enum import StrEnum
+
+
+class Size(StrEnum):
+    S = 'S'
+    M = 'M'
+    L = 'L'
+
+
 class Beverage:
-    desc = 'Unknown beverage'
+    _desc = 'Unknown beverage'
+    _size_prices: dict
+    _size: Size = Size.M
+
+    def __str__(self):
+        return f'{self.get_desc():<30} Cost = {self.cost():<5} Size = {self.get_size():<4}'
 
     def cost(self):
-        raise NotImplementedError
+        return self._size_prices.get(self.get_size())
 
     def get_desc(self):
-        return self.desc
+        return self._desc
 
+    def set_size(self, size: Size):
+        self._size = size
 
-class CondimentDecorator(Beverage):
-
-    def cost(self):
-        raise NotImplementedError
-
-    def get_desc(self):
-        raise NotImplementedError
+    def get_size(self):
+        return self._size
 
 
 class Espresso(Beverage):
-    desc = 'Espresso'
+    _desc = 'Espresso'
+    _size_prices = {Size.S: 1.5,
+                    Size.M: 1.99,
+                    Size.L: 2.5}
 
     def cost(self):
-        return 1.99
+        return self._size_prices.get(self.get_size())
 
 
 class HouseBlend(Beverage):
-    desc = 'House blend coffe'
-
-    def cost(self):
-        return .89
+    _desc = 'House blend coffe'
+    _size_prices = {Size.S: .69,
+                    Size.M: .89,
+                    Size.L: 1.09}
 
 
 class DarkRoast(Beverage):
-    desc = 'Dark roast coffe'
-
-    def cost(self):
-        return .99
+    _desc = 'Dark roast coffe'
+    _size_prices = {Size.S: .59,
+                    Size.M: .99,
+                    Size.L: 1.19}
 
 
 class NoCoffe(Beverage):
-    desc = 'No coffe'
+    _desc = 'No coffe'
+    _size_prices = {Size.S: .75,
+                    Size.M: 1.05,
+                    Size.L: 1.35}
+
+
+class CondimentDecorator(Beverage):
+    _beverage: Beverage
+
+    def __init__(self, beverage_: Beverage):
+        self._beverage = beverage_
 
     def cost(self):
-        return 1.05
+        raise NotImplementedError
+
+    def get_desc(self):
+        raise NotImplementedError
+
+    def get_size(self):
+        return self._beverage.get_size()
 
 
 class Condiment(CondimentDecorator):
 
-    def __init__(self, beverage: Beverage):
-        self.beverage = beverage
-
     @property
-    def name(self):
+    def _name(self):
         raise NotImplementedError
 
     @property
-    def price(self):
+    def _price(self):
         raise NotImplementedError
 
     def cost(self):
-        return round(self.price + self.beverage.cost(), 2)
+        return round(self._price + self._beverage.cost(), 2)
 
     def get_desc(self):
-        return self.beverage.get_desc() + f', {self.name}'
+        return self._beverage.get_desc() + f', {self._name}'
 
 
 class Mocha(Condiment):
-    name = 'Mocha'
-    price = .20
+    _name = 'Mocha'
+    _price = .20
 
 
 class Soy(Condiment):
-    name = 'Soy'
-    price = .15
+    _name = 'Soy'
+    _price = .15
 
 
 class Whip(Condiment):
-    name = 'Whip'
-    price = .10
+    _name = 'Whip'
+    _price = .10
 
 
-coffe = HouseBlend()
-beverage = Mocha(coffe)
-beverage = Mocha(beverage)
-beverage = Whip(beverage)
-print(beverage.get_desc() + '. Cost =', beverage.cost())
+if __name__ == '__main__':
+    coffe = Espresso()
+    coffe.set_size(size=Size.S)
+    beverage = Mocha(coffe)
+    beverage = Mocha(beverage)
+    beverage = Whip(beverage)
+    print(beverage)
 
-coffe = DarkRoast()
-beverage = Soy(coffe)
-beverage = Whip(beverage)
-beverage = Mocha(beverage)
-print(beverage.get_desc() + '. Cost =', beverage.cost())
+    coffe = DarkRoast()
+    print(coffe)
+    beverage = Soy(coffe)
+    print(beverage)
+    coffe.set_size(Size.L)
+    print(coffe)
+    coffe.set_size(Size.S)
+    print(coffe)
